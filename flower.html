@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flower Message</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #ffeaf4;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    #mainContent {
+      display: none;
+      z-index: 10;
+      padding: 10px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #d63384;
+      margin-top: 20px;
+    }
+
+    #videoContainer {
+      max-width: 90vw;
+      margin: auto;
+    }
+
+    video {
+      width: 35%;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .flower {
+      position: absolute;
+      width: 60px;
+      pointer-events: none;
+      animation: fall linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    #tapToReveal {
+      color: #d63384;
+      font-size: 1.8rem;
+      animation: blink 1.5s infinite;
+      padding: 0 20px;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    #secondText {
+      color: #d63384;
+      font-size: 1.5rem;
+      margin-top: 20px;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      padding: 0 15px;
+    }
+
+    .fadeIn {
+      opacity: 1 !important;
+    }
+
+    .fadeOut {
+      opacity: 0 !important;
+    }
+
+    audio {
+      display: none;
+    }
+
+    @media screen and (max-width: 480px) {
+      h1 {
+        font-size: 1.4rem;
+      }
+      #tapToReveal {
+        font-size: 1.4rem;
+      }
+      #secondText {
+        font-size: 1.2rem;
+      }
+      .flower {
+        width: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="tapToReveal">Tap mo kung ayaw moo..</div>
+  <div id="secondText">Ayaw mong sayangin tong pagkakataon HAHHAHA 😳</div>
+
+  <div id="mainContent">
+    <div id="videoContainer">
+      <video id="flowerVideo" src="flower.mp4" autoplay loop controls muted></video>
+    </div>
+    <h1>Wag kang mag alala, payag din ako HAHHAHAHA 💐</h1>
+  </div>
+
+  <audio id="bgMusic" src="romantic-music.mp3" loop></audio>
+
+  <script>
+    const flowers = ['flower1.png', 'flower2.png', 'flower3.png'];
+
+    function createFlower() {
+      const flower = document.createElement('img');
+      flower.src = flowers[Math.floor(Math.random() * flowers.length)];
+      flower.className = 'flower';
+      flower.style.left = Math.random() * 100 + 'vw';
+      flower.style.animationDuration = (Math.random() * 3 + 2) + 's';
+      flower.style.top = '-50px';
+      flower.style.transform = `rotate(${Math.random() * 360}deg)`;
+      document.body.appendChild(flower);
+
+      setTimeout(() => {
+        flower.remove();
+      }, 6000);
+    }
+
+    const bgMusic = document.getElementById('bgMusic');
+    const video = document.getElementById('flowerVideo');
+    const mainContent = document.getElementById('mainContent');
+    const tapText = document.getElementById('tapToReveal');
+    const secondText = document.getElementById('secondText');
+
+    function revealStepOne() {
+      tapText.classList.add('fadeOut');
+      setTimeout(() => {
+        tapText.style.display = 'none';
+        secondText.classList.add('fadeIn');
+
+        setTimeout(() => {
+          secondText.classList.remove('fadeIn');
+          secondText.classList.add('fadeOut');
+          setTimeout(() => {
+            secondText.style.display = 'none';
+            mainContent.style.display = 'block';
+
+            setInterval(createFlower, 500);
+            bgMusic.play().catch(err => console.warn("Autoplay blocked:", err));
+            video.muted = false;
+            video.play().catch(err => console.warn("Video play blocked:", err));
+          }, 1000);
+        }, 3000);
+      }, 1000);
+    }
+
+    document.body.addEventListener('click', revealStepOne, { once: true });
+  </script>
+
+</body>
+</html>
